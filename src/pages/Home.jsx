@@ -124,16 +124,7 @@ const Home = () => {
               transition={{ duration: 0.8, delay: 0.4 }}
               className="text-2xl md:text-3xl text-primary mb-8"
             >
-              <motion.span
-                animate={{ opacity: [1, 0.7, 1] }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-              >
-                {profile?.title || 'Computer Science Student'}
-              </motion.span>
+              {profile?.title || 'Computer Science Student'}
             </motion.p>
 
             <motion.p

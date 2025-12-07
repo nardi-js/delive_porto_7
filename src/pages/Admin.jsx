@@ -59,17 +59,17 @@ const Admin = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100 pt-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="min-h-screen bg-gray-100 pt-16 sm:pt-20 overflow-x-hidden">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
+          className="mb-6 sm:mb-8"
         >
-          <h1 className="text-4xl font-bold text-secondary mb-2">Admin Panel</h1>
-          <p className="text-gray-600">Manage your portfolio content</p>
-          <div className="mt-4 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
-            <p className="text-sm text-blue-800">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-secondary mb-2">Admin Panel</h1>
+          <p className="text-sm sm:text-base text-gray-600">Manage your portfolio content</p>
+          <div className="mt-4 p-3 sm:p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
+            <p className="text-xs sm:text-sm text-blue-800">
               <span className="font-semibold">💡 Tip:</span> This portfolio comes pre-loaded with sample data about "Adrian Wijaya". 
               You can edit all the information through the tabs below - just click on any section, modify the data, and click Save. 
               All changes are stored locally in your browser.
@@ -81,16 +81,42 @@ const Admin = () => {
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg"
+            className="mb-4 sm:mb-6 p-3 sm:p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg text-sm sm:text-base"
           >
             {message}
           </motion.div>
         )}
 
-        <div className="grid lg:grid-cols-4 gap-6">
+        <div className="grid lg:grid-cols-4 gap-4 sm:gap-6 w-full">
           {/* Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md p-4 sticky top-24">
+          <div className="lg:col-span-1 w-full">
+            {/* Mobile: Horizontal scroll tabs */}
+            <div className="lg:hidden mb-4 -mx-4 px-4 overflow-x-auto scrollbar-hide">
+              <div className="flex space-x-2 pb-2 min-w-max">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex items-center space-x-1.5 px-3 py-2 rounded-lg whitespace-nowrap transition-all ${
+                      activeTab === tab.id
+                        ? 'bg-primary text-white shadow-md'
+                        : 'bg-white text-gray-700 border border-gray-200'
+                    }`}
+                  >
+                    <span className="text-lg">{tab.icon}</span>
+                    <span className="font-medium text-xs">{tab.label}</span>
+                    {tab.id === 'inbox' && inbox.length > 0 && (
+                      <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                        {inbox.length}
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Desktop: Vertical sidebar */}
+            <div className="hidden lg:block bg-white rounded-lg shadow-md p-4 sticky top-24">
               <nav className="space-y-2">
                 {tabs.map((tab) => (
                   <button
@@ -98,7 +124,7 @@ const Admin = () => {
                     onClick={() => setActiveTab(tab.id)}
                     className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${
                       activeTab === tab.id
-                        ? 'bg-primary text-white'
+                        ? 'bg-primary text-white shadow-lg'
                         : 'text-gray-700 hover:bg-gray-100'
                     }`}
                   >
@@ -123,14 +149,31 @@ const Admin = () => {
                 }}
                 className="w-full mt-6 px-4 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-medium"
               >
-                Reset All Data
+                🔄 Reset Data
+              </button>
+            </div>
+
+            {/* Mobile Reset Button */}
+            <div className="lg:hidden mt-4">
+              <button
+                onClick={() => {
+                  if (window.confirm('Reset all data to default? This cannot be undone!')) {
+                    resetData();
+                    loadAllData();
+                    showMessage('Data reset to default values');
+                  }
+                }}
+                className="w-full px-4 py-2.5 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-medium text-sm flex items-center justify-center gap-2"
+              >
+                <span>🔄</span>
+                <span>Reset All Data</span>
               </button>
             </div>
           </div>
 
           {/* Content */}
-          <div className="lg:col-span-3">
-            <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="lg:col-span-3 w-full min-w-0">
+            <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 md:p-6 w-full overflow-x-hidden">
               {activeTab === 'profile' && (
                 <ProfileEditor
                   profile={profile}
@@ -261,100 +304,100 @@ const ProfileEditor = ({ profile, setProfile, showMessage }) => {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-secondary mb-6">Profile Settings</h2>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid md:grid-cols-2 gap-6">
+      <h2 className="text-xl sm:text-2xl font-bold text-secondary mb-4 sm:mb-6">Profile Settings</h2>
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6 w-full overflow-x-hidden">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 w-full">
           <div>
-            <label className="block text-sm font-semibold text-secondary mb-2">Name</label>
+            <label className="block text-xs sm:text-sm font-semibold text-secondary mb-2">Name</label>
             <input
               type="text"
               value={formData.name || ''}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+              className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary text-sm sm:text-base"
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-secondary mb-2">Title</label>
+            <label className="block text-xs sm:text-sm font-semibold text-secondary mb-2">Title</label>
             <input
               type="text"
               value={formData.title || ''}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+              className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary text-sm sm:text-base"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-secondary mb-2">Description</label>
+          <label className="block text-xs sm:text-sm font-semibold text-secondary mb-2">Description</label>
           <textarea
             value={formData.description || ''}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             rows="3"
-            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+            className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary text-sm sm:text-base break-words"
           />
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           <div>
-            <label className="block text-sm font-semibold text-secondary mb-2">Profile Picture URL</label>
+            <label className="block text-xs sm:text-sm font-semibold text-secondary mb-2">Profile Picture URL</label>
             <input
               type="url"
               value={formData.profilePictureURL || ''}
               onChange={(e) => setFormData({ ...formData, profilePictureURL: e.target.value })}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+              className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary text-sm sm:text-base"
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-secondary mb-2">Email</label>
+            <label className="block text-xs sm:text-sm font-semibold text-secondary mb-2">Email</label>
             <input
               type="email"
               value={formData.email || ''}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+              className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary text-sm sm:text-base"
             />
           </div>
         </div>
 
         {/* Social Links */}
         <div>
-          <div className="flex justify-between items-center mb-4">
-            <label className="block text-sm font-semibold text-secondary">Social Links</label>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 sm:mb-4 gap-2">
+            <label className="block text-xs sm:text-sm font-semibold text-secondary">Social Links</label>
             <button
               type="button"
               onClick={addSocial}
-              className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-accent transition-colors text-sm"
+              className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-primary text-white rounded-lg hover:bg-accent transition-colors text-xs sm:text-sm"
             >
               + Add Social
             </button>
           </div>
           <div className="space-y-3">
             {formData.socials?.map((social, index) => (
-              <div key={index} className="flex gap-3 items-center p-3 bg-gray-50 rounded-lg">
+              <div key={index} className="flex flex-col sm:flex-row gap-2 sm:gap-3 items-stretch sm:items-center p-3 bg-gray-50 rounded-lg">
                 <input
                   type="text"
                   placeholder="Name"
                   value={social.name}
                   onChange={(e) => handleSocialChange(index, 'name', e.target.value)}
-                  className="flex-1 px-3 py-2 border rounded-lg"
+                  className="flex-1 px-3 py-2 border rounded-lg text-sm"
                 />
                 <input
                   type="url"
                   placeholder="URL"
                   value={social.url}
                   onChange={(e) => handleSocialChange(index, 'url', e.target.value)}
-                  className="flex-1 px-3 py-2 border rounded-lg"
+                  className="flex-1 px-3 py-2 border rounded-lg text-sm"
                 />
                 <input
                   type="text"
                   placeholder="Icon (emoji)"
                   value={social.icon}
                   onChange={(e) => handleSocialChange(index, 'icon', e.target.value)}
-                  className="w-20 px-3 py-2 border rounded-lg text-center"
+                  className="w-full sm:w-20 px-3 py-2 border rounded-lg text-center text-sm"
                 />
                 <button
                   type="button"
                   onClick={() => removeSocial(index)}
-                  className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                  className="w-full sm:w-auto p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 text-sm"
                 >
                   ✕
                 </button>
@@ -365,33 +408,33 @@ const ProfileEditor = ({ profile, setProfile, showMessage }) => {
 
         {/* Education */}
         <div>
-          <div className="flex justify-between items-center mb-4">
-            <label className="block text-sm font-semibold text-secondary">Education</label>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 sm:mb-4 gap-2">
+            <label className="block text-xs sm:text-sm font-semibold text-secondary">Education</label>
             <button
               type="button"
               onClick={addEducation}
-              className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-accent transition-colors text-sm"
+              className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-primary text-white rounded-lg hover:bg-accent transition-colors text-xs sm:text-sm"
             >
               + Add Education
             </button>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {formData.education?.map((edu, index) => (
-              <div key={edu.id} className="p-4 bg-gray-50 rounded-lg space-y-3">
-                <div className="grid md:grid-cols-2 gap-3">
+              <div key={edu.id} className="p-3 sm:p-4 bg-gray-50 rounded-lg space-y-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <input
                     type="text"
                     placeholder="Institution"
                     value={edu.institution}
                     onChange={(e) => handleEducationChange(index, 'institution', e.target.value)}
-                    className="px-3 py-2 border rounded-lg"
+                    className="px-3 py-2 border rounded-lg text-sm"
                   />
                   <input
                     type="text"
                     placeholder="Degree"
                     value={edu.degree}
                     onChange={(e) => handleEducationChange(index, 'degree', e.target.value)}
-                    className="px-3 py-2 border rounded-lg"
+                    className="px-3 py-2 border rounded-lg text-sm"
                   />
                 </div>
                 <input
@@ -399,19 +442,19 @@ const ProfileEditor = ({ profile, setProfile, showMessage }) => {
                   placeholder="Year"
                   value={edu.year}
                   onChange={(e) => handleEducationChange(index, 'year', e.target.value)}
-                  className="w-full px-3 py-2 border rounded-lg"
+                  className="w-full px-3 py-2 border rounded-lg text-sm"
                 />
                 <textarea
                   placeholder="Description"
                   value={edu.description}
                   onChange={(e) => handleEducationChange(index, 'description', e.target.value)}
                   rows="2"
-                  className="w-full px-3 py-2 border rounded-lg"
+                  className="w-full px-3 py-2 border rounded-lg text-sm"
                 />
                 <button
                   type="button"
                   onClick={() => removeEducation(index)}
-                  className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 text-sm"
+                  className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 text-xs sm:text-sm"
                 >
                   Remove
                 </button>
@@ -422,33 +465,33 @@ const ProfileEditor = ({ profile, setProfile, showMessage }) => {
 
         {/* Experience */}
         <div>
-          <div className="flex justify-between items-center mb-4">
-            <label className="block text-sm font-semibold text-secondary">Experience</label>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 sm:mb-4 gap-2">
+            <label className="block text-xs sm:text-sm font-semibold text-secondary">Experience</label>
             <button
               type="button"
               onClick={addExperience}
-              className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-accent transition-colors text-sm"
+              className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-primary text-white rounded-lg hover:bg-accent transition-colors text-xs sm:text-sm"
             >
               + Add Experience
             </button>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {formData.experience?.map((exp, index) => (
-              <div key={exp.id} className="p-4 bg-gray-50 rounded-lg space-y-3">
-                <div className="grid md:grid-cols-2 gap-3">
+              <div key={exp.id} className="p-3 sm:p-4 bg-gray-50 rounded-lg space-y-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <input
                     type="text"
                     placeholder="Company"
                     value={exp.company}
                     onChange={(e) => handleExperienceChange(index, 'company', e.target.value)}
-                    className="px-3 py-2 border rounded-lg"
+                    className="px-3 py-2 border rounded-lg text-sm"
                   />
                   <input
                     type="text"
                     placeholder="Position"
                     value={exp.position}
                     onChange={(e) => handleExperienceChange(index, 'position', e.target.value)}
-                    className="px-3 py-2 border rounded-lg"
+                    className="px-3 py-2 border rounded-lg text-sm"
                   />
                 </div>
                 <input
@@ -456,19 +499,19 @@ const ProfileEditor = ({ profile, setProfile, showMessage }) => {
                   placeholder="Year"
                   value={exp.year}
                   onChange={(e) => handleExperienceChange(index, 'year', e.target.value)}
-                  className="w-full px-3 py-2 border rounded-lg"
+                  className="w-full px-3 py-2 border rounded-lg text-sm"
                 />
                 <textarea
                   placeholder="Description"
                   value={exp.description}
                   onChange={(e) => handleExperienceChange(index, 'description', e.target.value)}
                   rows="2"
-                  className="w-full px-3 py-2 border rounded-lg"
+                  className="w-full px-3 py-2 border rounded-lg text-sm"
                 />
                 <button
                   type="button"
                   onClick={() => removeExperience(index)}
-                  className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 text-sm"
+                  className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 text-xs sm:text-sm"
                 >
                   Remove
                 </button>
@@ -479,7 +522,7 @@ const ProfileEditor = ({ profile, setProfile, showMessage }) => {
 
         <button
           type="submit"
-          className="w-full px-6 py-3 bg-primary text-white rounded-lg hover:bg-accent transition-colors font-semibold"
+          className="w-full px-4 sm:px-6 py-2.5 sm:py-3 bg-primary text-white rounded-lg hover:bg-accent transition-colors font-semibold text-sm sm:text-base"
         >
           Save Profile
         </button>
@@ -532,21 +575,21 @@ const SkillsEditor = ({ skills, setSkills, showMessage }) => {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-secondary mb-6">Skills Management</h2>
+      <h2 className="text-xl sm:text-2xl font-bold text-secondary mb-4 sm:mb-6">Skills Management</h2>
       
       {/* Form */}
-      <form onSubmit={handleSubmit} className="mb-8 p-6 bg-gray-50 rounded-lg space-y-4">
-        <h3 className="text-lg font-semibold text-secondary">
+      <form onSubmit={handleSubmit} className="mb-6 sm:mb-8 p-4 sm:p-6 bg-gray-50 rounded-lg space-y-3 sm:space-y-4">
+        <h3 className="text-base sm:text-lg font-semibold text-secondary">
           {editingSkill ? 'Edit Skill' : 'Add New Skill'}
         </h3>
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <input
             type="text"
             placeholder="Skill Name"
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
-            className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+            className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary text-sm sm:text-base"
           />
           <input
             type="text"
@@ -554,12 +597,12 @@ const SkillsEditor = ({ skills, setSkills, showMessage }) => {
             value={formData.category}
             onChange={(e) => setFormData({ ...formData, category: e.target.value })}
             required
-            className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+            className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary text-sm sm:text-base"
           />
         </div>
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div>
-            <label className="block text-sm text-gray-600 mb-2">Level: {formData.level}%</label>
+            <label className="block text-xs sm:text-sm text-gray-600 mb-2">Level: {formData.level}%</label>
             <input
               type="range"
               min="0"
@@ -575,13 +618,13 @@ const SkillsEditor = ({ skills, setSkills, showMessage }) => {
             value={formData.icon}
             onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
             required
-            className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+            className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary text-sm sm:text-base"
           />
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
           <button
             type="submit"
-            className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-accent transition-colors font-semibold"
+            className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-2.5 bg-primary text-white rounded-lg hover:bg-accent transition-colors font-semibold text-sm sm:text-base"
           >
             {editingSkill ? 'Update Skill' : 'Add Skill'}
           </button>
@@ -589,7 +632,7 @@ const SkillsEditor = ({ skills, setSkills, showMessage }) => {
             <button
               type="button"
               onClick={handleCancel}
-              className="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+              className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-2.5 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors text-sm sm:text-base"
             >
               Cancel
             </button>
@@ -598,16 +641,16 @@ const SkillsEditor = ({ skills, setSkills, showMessage }) => {
       </form>
 
       {/* Skills List */}
-      <div className="space-y-3">
-        <h3 className="text-lg font-semibold text-secondary mb-4">All Skills ({skills.length})</h3>
+      <div className="space-y-3 w-full overflow-x-hidden">
+        <h3 className="text-base sm:text-lg font-semibold text-secondary mb-3 sm:mb-4">All Skills ({skills.length})</h3>
         {skills.map((skill) => (
-          <div key={skill.id} className="flex items-center justify-between p-4 bg-white border rounded-lg hover:shadow-md transition-shadow">
-            <div className="flex items-center space-x-4 flex-1">
-              <span className="text-3xl">{skill.icon}</span>
-              <div className="flex-1">
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-semibold text-secondary">{skill.name}</h4>
-                  <span className="text-sm text-gray-600">{skill.category}</span>
+          <div key={skill.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 sm:p-4 bg-white border rounded-lg hover:shadow-md transition-shadow gap-3 w-full overflow-hidden">
+            <div className="flex items-start sm:items-center space-x-3 sm:space-x-4 flex-1 w-full">
+              <span className="text-2xl sm:text-3xl flex-shrink-0">{skill.icon}</span>
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 gap-1">
+                  <h4 className="font-semibold text-secondary text-sm sm:text-base">{skill.name}</h4>
+                  <span className="text-xs sm:text-sm text-gray-600">{skill.category}</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
@@ -618,16 +661,16 @@ const SkillsEditor = ({ skills, setSkills, showMessage }) => {
                 <span className="text-xs text-gray-500">{skill.level}%</span>
               </div>
             </div>
-            <div className="flex gap-2 ml-4">
+            <div className="flex flex-row sm:flex-row gap-2 w-full sm:w-auto sm:ml-4">
               <button
                 onClick={() => handleEdit(skill)}
-                className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors text-sm"
+                className="flex-1 sm:flex-none px-3 py-1.5 sm:py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors text-xs sm:text-sm"
               >
                 Edit
               </button>
               <button
                 onClick={() => handleDelete(skill.id)}
-                className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-sm"
+                className="flex-1 sm:flex-none px-3 py-1.5 sm:py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-xs sm:text-sm"
               >
                 Delete
               </button>
@@ -740,11 +783,11 @@ const ProjectsEditor = ({ projects, setProjects, showMessage }) => {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-secondary mb-6">Projects Management</h2>
+      <h2 className="text-xl sm:text-2xl font-bold text-secondary mb-4 sm:mb-6">Projects Management</h2>
       
       {/* Form */}
-      <form onSubmit={handleSubmit} className="mb-8 p-6 bg-gray-50 rounded-lg space-y-4">
-        <h3 className="text-lg font-semibold text-secondary">
+      <form onSubmit={handleSubmit} className="mb-6 sm:mb-8 p-4 sm:p-6 bg-gray-50 rounded-lg space-y-3 sm:space-y-4">
+        <h3 className="text-base sm:text-lg font-semibold text-secondary">
           {editingProject ? 'Edit Project' : 'Add New Project'}
         </h3>
         
@@ -754,7 +797,7 @@ const ProjectsEditor = ({ projects, setProjects, showMessage }) => {
           value={formData.title}
           onChange={(e) => setFormData({ ...formData, title: e.target.value })}
           required
-          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+          className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary text-sm sm:text-base"
         />
         
         <textarea
@@ -763,7 +806,7 @@ const ProjectsEditor = ({ projects, setProjects, showMessage }) => {
           onChange={(e) => setFormData({ ...formData, shortDescription: e.target.value })}
           required
           rows="2"
-          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+          className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary text-sm sm:text-base"
         />
         
         <textarea
@@ -772,23 +815,23 @@ const ProjectsEditor = ({ projects, setProjects, showMessage }) => {
           onChange={(e) => setFormData({ ...formData, longDescription: e.target.value })}
           required
           rows="4"
-          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+          className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary text-sm sm:text-base"
         />
 
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <input
             type="url"
             placeholder="GitHub URL"
             value={formData.githubURL}
             onChange={(e) => setFormData({ ...formData, githubURL: e.target.value })}
-            className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+            className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary text-sm sm:text-base"
           />
           <input
             type="url"
             placeholder="Live Demo URL"
             value={formData.liveDemoURL}
             onChange={(e) => setFormData({ ...formData, liveDemoURL: e.target.value })}
-            className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+            className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary text-sm sm:text-base"
           />
         </div>
 
@@ -798,25 +841,25 @@ const ProjectsEditor = ({ projects, setProjects, showMessage }) => {
           value={formData.thumbnailURL}
           onChange={(e) => setFormData({ ...formData, thumbnailURL: e.target.value })}
           required
-          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+          className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary text-sm sm:text-base"
         />
 
         {/* Tech Stack */}
         <div>
-          <label className="block text-sm font-semibold text-secondary mb-2">Tech Stack</label>
-          <div className="flex gap-2 mb-2">
+          <label className="block text-xs sm:text-sm font-semibold text-secondary mb-2">Tech Stack</label>
+          <div className="flex flex-col sm:flex-row gap-2 mb-2">
             <input
               type="text"
               placeholder="Add technology"
               value={techInput}
               onChange={(e) => setTechInput(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTech())}
-              className="flex-1 px-4 py-2 border rounded-lg"
+              className="flex-1 px-3 sm:px-4 py-2 border rounded-lg text-sm sm:text-base"
             />
             <button
               type="button"
               onClick={addTech}
-              className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-accent transition-colors"
+              className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-primary text-white rounded-lg hover:bg-accent transition-colors text-sm sm:text-base"
             >
               Add
             </button>
@@ -842,20 +885,20 @@ const ProjectsEditor = ({ projects, setProjects, showMessage }) => {
 
         {/* Features */}
         <div>
-          <label className="block text-sm font-semibold text-secondary mb-2">Features</label>
-          <div className="flex gap-2 mb-2">
+          <label className="block text-xs sm:text-sm font-semibold text-secondary mb-2">Features</label>
+          <div className="flex flex-col sm:flex-row gap-2 mb-2">
             <input
               type="text"
               placeholder="Add feature"
               value={featureInput}
               onChange={(e) => setFeatureInput(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addFeature())}
-              className="flex-1 px-4 py-2 border rounded-lg"
+              className="flex-1 px-3 sm:px-4 py-2 border rounded-lg text-sm sm:text-base"
             />
             <button
               type="button"
               onClick={addFeature}
-              className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-accent transition-colors"
+              className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-primary text-white rounded-lg hover:bg-accent transition-colors text-sm sm:text-base"
             >
               Add
             </button>
@@ -878,25 +921,25 @@ const ProjectsEditor = ({ projects, setProjects, showMessage }) => {
 
         {/* Gallery Images */}
         <div>
-          <label className="block text-sm font-semibold text-secondary mb-2">Gallery Images</label>
-          <div className="flex gap-2 mb-2">
+          <label className="block text-xs sm:text-sm font-semibold text-secondary mb-2">Gallery Images</label>
+          <div className="flex flex-col sm:flex-row gap-2 mb-2">
             <input
               type="url"
               placeholder="Add image URL"
               value={galleryInput}
               onChange={(e) => setGalleryInput(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addGallery())}
-              className="flex-1 px-4 py-2 border rounded-lg"
+              className="flex-1 px-3 sm:px-4 py-2 border rounded-lg text-sm sm:text-base"
             />
             <button
               type="button"
               onClick={addGallery}
-              className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-accent transition-colors"
+              className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-primary text-white rounded-lg hover:bg-accent transition-colors text-sm sm:text-base"
             >
               Add
             </button>
           </div>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {formData.galleryImages.map((img, index) => (
               <div key={index} className="relative group">
                 <img src={img} alt="" className="w-full h-24 object-cover rounded" />
@@ -917,7 +960,7 @@ const ProjectsEditor = ({ projects, setProjects, showMessage }) => {
           value={formData.challenges}
           onChange={(e) => setFormData({ ...formData, challenges: e.target.value })}
           rows="3"
-          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+          className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary text-sm sm:text-base"
         />
 
         <textarea
@@ -925,13 +968,13 @@ const ProjectsEditor = ({ projects, setProjects, showMessage }) => {
           value={formData.solutions}
           onChange={(e) => setFormData({ ...formData, solutions: e.target.value })}
           rows="3"
-          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+          className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary text-sm sm:text-base"
         />
 
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
           <button
             type="submit"
-            className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-accent transition-colors font-semibold"
+            className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-2.5 bg-primary text-white rounded-lg hover:bg-accent transition-colors font-semibold text-sm sm:text-base"
           >
             {editingProject ? 'Update Project' : 'Add Project'}
           </button>
@@ -939,7 +982,7 @@ const ProjectsEditor = ({ projects, setProjects, showMessage }) => {
             <button
               type="button"
               onClick={resetForm}
-              className="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+              className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-2.5 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors text-sm sm:text-base"
             >
               Cancel
             </button>
@@ -948,19 +991,19 @@ const ProjectsEditor = ({ projects, setProjects, showMessage }) => {
       </form>
 
       {/* Projects List */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-secondary mb-4">All Projects ({projects.length})</h3>
+      <div className="space-y-3 sm:space-y-4 w-full overflow-x-hidden">
+        <h3 className="text-base sm:text-lg font-semibold text-secondary mb-3 sm:mb-4">All Projects ({projects.length})</h3>
         {projects.map((project) => (
-          <div key={project.id} className="p-4 bg-white border rounded-lg hover:shadow-md transition-shadow">
-            <div className="flex gap-4">
+          <div key={project.id} className="p-3 sm:p-4 bg-white border rounded-lg hover:shadow-md transition-shadow w-full overflow-hidden">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full">
               <img
                 src={project.thumbnailURL}
                 alt={project.title}
-                className="w-32 h-24 object-cover rounded"
+                className="w-full sm:w-32 h-32 sm:h-24 object-cover rounded flex-shrink-0"
               />
               <div className="flex-1">
-                <h4 className="font-bold text-secondary text-lg mb-1">{project.title}</h4>
-                <p className="text-gray-600 text-sm mb-2">{project.shortDescription}</p>
+                <h4 className="font-bold text-secondary text-base sm:text-lg mb-1">{project.title}</h4>
+                <p className="text-gray-600 text-xs sm:text-sm mb-2">{project.shortDescription}</p>
                 <div className="flex flex-wrap gap-2">
                   {project.techStack.slice(0, 3).map((tech, i) => (
                     <span key={i} className="px-2 py-1 bg-blue-100 text-primary text-xs rounded-full">
@@ -974,16 +1017,16 @@ const ProjectsEditor = ({ projects, setProjects, showMessage }) => {
                   )}
                 </div>
               </div>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-row sm:flex-col gap-2 w-full sm:w-auto">
                 <button
                   onClick={() => handleEdit(project)}
-                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors text-sm"
+                  className="flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors text-xs sm:text-sm"
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => handleDelete(project.id)}
-                  className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-sm"
+                  className="flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-xs sm:text-sm"
                 >
                   Delete
                 </button>
@@ -1048,11 +1091,11 @@ const CertificatesEditor = ({ certificates, setCertificates, showMessage }) => {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-secondary mb-6">Certificates Management</h2>
+      <h2 className="text-xl sm:text-2xl font-bold text-secondary mb-4 sm:mb-6">Certificates Management</h2>
       
       {/* Form */}
-      <form onSubmit={handleSubmit} className="mb-8 p-6 bg-gray-50 rounded-lg space-y-4">
-        <h3 className="text-lg font-semibold text-secondary">
+      <form onSubmit={handleSubmit} className="mb-6 sm:mb-8 p-4 sm:p-6 bg-gray-50 rounded-lg space-y-3 sm:space-y-4">
+        <h3 className="text-base sm:text-lg font-semibold text-secondary">
           {editingCert ? 'Edit Certificate' : 'Add New Certificate'}
         </h3>
         
@@ -1062,17 +1105,17 @@ const CertificatesEditor = ({ certificates, setCertificates, showMessage }) => {
           value={formData.certificateTitle}
           onChange={(e) => setFormData({ ...formData, certificateTitle: e.target.value })}
           required
-          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+          className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary text-sm sm:text-base"
         />
         
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <input
             type="text"
             placeholder="Issuer"
             value={formData.issuer}
             onChange={(e) => setFormData({ ...formData, issuer: e.target.value })}
             required
-            className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+            className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary text-sm sm:text-base"
           />
           <input
             type="text"
@@ -1080,7 +1123,7 @@ const CertificatesEditor = ({ certificates, setCertificates, showMessage }) => {
             value={formData.year}
             onChange={(e) => setFormData({ ...formData, year: e.target.value })}
             required
-            className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+            className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary text-sm sm:text-base"
           />
         </div>
 
@@ -1089,7 +1132,7 @@ const CertificatesEditor = ({ certificates, setCertificates, showMessage }) => {
           placeholder="Credential ID"
           value={formData.credentialID}
           onChange={(e) => setFormData({ ...formData, credentialID: e.target.value })}
-          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+          className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary text-sm sm:text-base"
         />
 
         <input
@@ -1097,7 +1140,7 @@ const CertificatesEditor = ({ certificates, setCertificates, showMessage }) => {
           placeholder="Credential URL"
           value={formData.credentialURL}
           onChange={(e) => setFormData({ ...formData, credentialURL: e.target.value })}
-          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+          className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary text-sm sm:text-base"
         />
 
         <input
@@ -1106,13 +1149,13 @@ const CertificatesEditor = ({ certificates, setCertificates, showMessage }) => {
           value={formData.certificateImageURL}
           onChange={(e) => setFormData({ ...formData, certificateImageURL: e.target.value })}
           required
-          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+          className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary text-sm sm:text-base"
         />
 
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
           <button
             type="submit"
-            className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-accent transition-colors font-semibold"
+            className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-2.5 bg-primary text-white rounded-lg hover:bg-accent transition-colors font-semibold text-sm sm:text-base"
           >
             {editingCert ? 'Update Certificate' : 'Add Certificate'}
           </button>
@@ -1120,7 +1163,7 @@ const CertificatesEditor = ({ certificates, setCertificates, showMessage }) => {
             <button
               type="button"
               onClick={resetForm}
-              className="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+              className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-2.5 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors text-sm sm:text-base"
             >
               Cancel
             </button>
@@ -1129,34 +1172,34 @@ const CertificatesEditor = ({ certificates, setCertificates, showMessage }) => {
       </form>
 
       {/* Certificates List */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-secondary mb-4">All Certificates ({certificates.length})</h3>
+      <div className="space-y-3 sm:space-y-4 w-full overflow-x-hidden">
+        <h3 className="text-base sm:text-lg font-semibold text-secondary mb-3 sm:mb-4">All Certificates ({certificates.length})</h3>
         {certificates.map((cert) => (
-          <div key={cert.id} className="p-4 bg-white border rounded-lg hover:shadow-md transition-shadow">
-            <div className="flex gap-4">
+          <div key={cert.id} className="p-3 sm:p-4 bg-white border rounded-lg hover:shadow-md transition-shadow w-full overflow-hidden">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full">
               <img
                 src={cert.certificateImageURL}
                 alt={cert.certificateTitle}
-                className="w-40 h-28 object-cover rounded"
+                className="w-full sm:w-40 h-32 sm:h-28 object-cover rounded flex-shrink-0"
               />
               <div className="flex-1">
-                <h4 className="font-bold text-secondary text-lg mb-1">{cert.certificateTitle}</h4>
-                <p className="text-gray-600 mb-1">{cert.issuer}</p>
-                <p className="text-primary text-sm font-semibold">{cert.year}</p>
+                <h4 className="font-bold text-secondary text-base sm:text-lg mb-1">{cert.certificateTitle}</h4>
+                <p className="text-gray-600 text-sm sm:text-base mb-1">{cert.issuer}</p>
+                <p className="text-primary text-xs sm:text-sm font-semibold">{cert.year}</p>
                 {cert.credentialID && (
                   <p className="text-xs text-gray-500 mt-2">ID: {cert.credentialID}</p>
                 )}
               </div>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-row sm:flex-col gap-2 w-full sm:w-auto">
                 <button
                   onClick={() => handleEdit(cert)}
-                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors text-sm"
+                  className="flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors text-xs sm:text-sm"
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => handleDelete(cert.id)}
-                  className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-sm"
+                  className="flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-xs sm:text-sm"
                 >
                   Delete
                 </button>
@@ -1200,35 +1243,35 @@ const ResumeEditor = ({ resume, setResume, showMessage }) => {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-secondary mb-6">Resume Settings</h2>
+      <h2 className="text-xl sm:text-2xl font-bold text-secondary mb-4 sm:mb-6">Resume Settings</h2>
       
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
         <div>
-          <label className="block text-sm font-semibold text-secondary mb-2">Professional Summary</label>
+          <label className="block text-xs sm:text-sm font-semibold text-secondary mb-2">Professional Summary</label>
           <textarea
             value={formData.summary || ''}
             onChange={(e) => setFormData({ ...formData, summary: e.target.value })}
             rows="4"
-            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+            className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary text-sm sm:text-base"
             placeholder="Write a brief professional summary..."
           />
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-secondary mb-2">Achievements & Awards</label>
-          <div className="flex gap-2 mb-3">
+          <label className="block text-xs sm:text-sm font-semibold text-secondary mb-2">Achievements & Awards</label>
+          <div className="flex flex-col sm:flex-row gap-2 mb-3">
             <input
               type="text"
               placeholder="Add achievement"
               value={achievementInput}
               onChange={(e) => setAchievementInput(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addAchievement())}
-              className="flex-1 px-4 py-2 border rounded-lg"
+              className="flex-1 px-3 sm:px-4 py-2 border rounded-lg text-sm sm:text-base"
             />
             <button
               type="button"
               onClick={addAchievement}
-              className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-accent transition-colors"
+              className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-primary text-white rounded-lg hover:bg-accent transition-colors text-sm sm:text-base"
             >
               Add
             </button>
@@ -1257,7 +1300,7 @@ const ResumeEditor = ({ resume, setResume, showMessage }) => {
 
         <button
           type="submit"
-          className="w-full px-6 py-3 bg-primary text-white rounded-lg hover:bg-accent transition-colors font-semibold"
+          className="w-full px-4 sm:px-6 py-2.5 sm:py-3 bg-primary text-white rounded-lg hover:bg-accent transition-colors font-semibold text-sm sm:text-base"
         >
           Save Resume
         </button>
@@ -1278,7 +1321,7 @@ const InboxViewer = ({ inbox, setInbox, showMessage }) => {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-secondary mb-6">Inbox Messages ({inbox.length})</h2>
+      <h2 className="text-xl sm:text-2xl font-bold text-secondary mb-4 sm:mb-6">Inbox Messages ({inbox.length})</h2>
       
       {inbox.length === 0 ? (
         <div className="text-center py-12 bg-gray-50 rounded-lg">
@@ -1290,7 +1333,7 @@ const InboxViewer = ({ inbox, setInbox, showMessage }) => {
       ) : (
         <div className="space-y-4">
           {inbox.map((msg) => (
-            <div key={msg.id} className="p-6 bg-white border rounded-lg hover:shadow-md transition-shadow">
+            <div key={msg.id} className="p-4 sm:p-6 bg-white border rounded-lg hover:shadow-md transition-shadow">
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <h3 className="font-bold text-secondary text-lg">{msg.name}</h3>
@@ -1305,17 +1348,17 @@ const InboxViewer = ({ inbox, setInbox, showMessage }) => {
                   </p>
                 </div>
               </div>
-              <p className="text-gray-700 mb-4 whitespace-pre-wrap">{msg.message}</p>
-              <div className="flex gap-3">
+              <p className="text-gray-700 mb-4 whitespace-pre-wrap text-sm sm:text-base">{msg.message}</p>
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                 <a
                   href={`mailto:${msg.email}?subject=Re: Your message&body=Hi ${msg.name},%0D%0A%0D%0A`}
-                  className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-accent transition-colors text-sm"
+                  className="w-full sm:w-auto text-center px-3 sm:px-4 py-2 bg-primary text-white rounded-lg hover:bg-accent transition-colors text-xs sm:text-sm"
                 >
                   Reply
                 </a>
                 <button
                   onClick={() => handleDelete(msg.id)}
-                  className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm"
+                  className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-xs sm:text-sm"
                 >
                   Delete
                 </button>
@@ -1346,12 +1389,12 @@ const ThemeEditor = ({ theme, setTheme, showMessage }) => {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-secondary mb-6">Theme Settings</h2>
+      <h2 className="text-xl sm:text-2xl font-bold text-secondary mb-4 sm:mb-6">Theme Settings</h2>
       
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           <div>
-            <label className="block text-sm font-semibold text-secondary mb-2">Primary Color</label>
+            <label className="block text-xs sm:text-sm font-semibold text-secondary mb-2">Primary Color</label>
             <div className="flex gap-3 items-center">
               <input
                 type="color"
@@ -1369,7 +1412,7 @@ const ThemeEditor = ({ theme, setTheme, showMessage }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-secondary mb-2">Accent Color</label>
+            <label className="block text-xs sm:text-sm font-semibold text-secondary mb-2">Accent Color</label>
             <div className="flex gap-3 items-center">
               <input
                 type="color"
@@ -1388,11 +1431,11 @@ const ThemeEditor = ({ theme, setTheme, showMessage }) => {
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-secondary mb-2">Font Size</label>
+          <label className="block text-xs sm:text-sm font-semibold text-secondary mb-2">Font Size</label>
           <select
             value={formData.fontSize}
             onChange={(e) => setFormData({ ...formData, fontSize: e.target.value })}
-            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+            className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary text-sm sm:text-base"
           >
             <option value="small">Small</option>
             <option value="medium">Medium</option>
@@ -1401,11 +1444,11 @@ const ThemeEditor = ({ theme, setTheme, showMessage }) => {
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-secondary mb-2">Layout Style</label>
+          <label className="block text-xs sm:text-sm font-semibold text-secondary mb-2">Layout Style</label>
           <select
             value={formData.layout}
             onChange={(e) => setFormData({ ...formData, layout: e.target.value })}
-            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+            className="w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary text-sm sm:text-base"
           >
             <option value="modern">Modern</option>
             <option value="classic">Classic</option>
@@ -1422,7 +1465,7 @@ const ThemeEditor = ({ theme, setTheme, showMessage }) => {
 
         <button
           type="submit"
-          className="w-full px-6 py-3 bg-primary text-white rounded-lg hover:bg-accent transition-colors font-semibold"
+          className="w-full px-4 sm:px-6 py-2.5 sm:py-3 bg-primary text-white rounded-lg hover:bg-accent transition-colors font-semibold text-sm sm:text-base"
         >
           Save Theme Settings
         </button>

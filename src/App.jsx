@@ -4,6 +4,7 @@ import { initializeStorage } from './utils/storage';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import PageTransition from './components/PageTransition';
+import FloatingAd from './components/FloatingAd';
 import Home from './pages/Home';
 import About from './pages/About';
 import Projects from './pages/Projects';
@@ -49,6 +50,7 @@ function App() {
           </PageTransition>
         </main>
         <Footer />
+        <FloatingAd />
       </div>
     </Router>
   );
